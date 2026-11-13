@@ -1,18 +1,3 @@
-// Course grade calculator: validates the grade form, calculates the final
-// grade and letter grade, and shows a result card. See docs/requirements.md.
-
-const HOMEWORK_WEIGHT = 0.4;
-const MIDTERM_WEIGHT = 0.25;
-const FINAL_WEIGHT = 0.35;
-const MAX_EXTRA = 10;
-const MAX_NOTE = 120;
-
-// A score from 0 to 100 with up to 2 decimal places, for example 87.25.
-const SCORE_PATTERN = /^\d{1,3}(\.\d{1,2})?$/;
-
-const FIELDS = ["homework", "midterm", "final", "extra", "note"];
-const SCORE_FIELDS = ["homework", "midterm", "final"];
-
 const form = document.getElementById("grade-form");
 const statusEl = document.getElementById("status");
 const noteCounter = document.getElementById("note-counter");
@@ -103,4 +88,57 @@ form.addEventListener("submit", (event) => {
 
   statusEl.textContent = "Grade calculated.";
   showResult(calculateGrade(data), data);
+
+  const homework = Number(document.getElementById("homework").value);
+  const midterm = Number(document.getElementById("midterm").value);
+  const finalExam = Number(document.getElementById("final").value);
+  const extra = Number(document.getElementById("extra").value || 0);
+
+  // Validate required grades
+  if (
+    !document.getElementById("homework").value.trim() ||
+    !document.getElementById("midterm").value.trim() ||
+    !document.getElementById("final").value.trim()
+  ) {
+    statusEl.textContent = "Please enter all required grades.";
+    return;
+  }
+
+  if (
+    !Number.isFinite(homework) ||
+    !Number.isFinite(midterm) ||
+    !Number.isFinite(finalExam) ||
+    !Number.isFinite(extra) ||
+    homework < 0 || homework > 100 ||
+    midterm < 0 || midterm > 100 ||
+    finalExam < 0 || finalExam > 100 ||
+    extra < 0 || extra > 5
+  ) {
+    statusEl.textContent = "Enter valid grades between 0 and 100 and extra credit between 0 and 5.";
+    return;
+  }
+
+  // Calculate weighted course grade
+  const grade = (homework * 0.3) +
+                (midterm * 0.3) +
+                (finalExam * 0.4) +
+                extra;
+
+  // Determine letter grade
+  let letterGrade;
+
+  if (grade >= 90) {
+    letterGrade = "A";
+  } else if (grade >= 80) {
+    letterGrade = "B";
+  } else if (grade >= 70) {
+    letterGrade = "C";
+  } else if (grade >= 60) {
+    letterGrade = "D";
+  } else {
+    letterGrade = "F";
+  }
+
+  statusEl.textContent =
+    `Your course grade is ${grade.toFixed(2)}% (${letterGrade}).`;
 });
