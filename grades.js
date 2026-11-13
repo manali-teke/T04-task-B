@@ -76,9 +76,12 @@ function showErrors(errors) {
 }
 
 function showResult(grade, data) {
-  result.innerHTML = `
-    <h2>${grade.toFixed(1)} (${letterGrade(grade)})</h2>
-    <p>${data.note}</p>`;
+  const heading = document.createElement("h2");
+  heading.textContent = `${grade.toFixed(1)} (${letterGrade(grade)})`;
+  const note = document.createElement("p");
+  note.textContent = data.note;
+  note.style.whiteSpace = "pre-wrap";
+  result.replaceChildren(heading, note);
   result.hidden = false;
 }
 
